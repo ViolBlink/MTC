@@ -31,32 +31,34 @@ T = Parametrs[0]["T"]
 d = 2/np.sqrt((m * (1/a + (a ** 2) * (w ** 2)/2)))
 
 # Конфигурация x, заполненая 0
-X = [0] * N
+X = np.zeros(N)
 # Массив для x^2 и просто x
-X2 = [0]
-SX = [0]
+X2 = np.zeros(NT)
+SX = np.zeros(NT)
 
 
 for i in range(NT):
     # Берется случайный x[j]
     j = random.randint(0, N - 1)
     # Из массива вычитается старое значение, чтобы потом заменить новым
-    X2.append(X2[i] - (X[j] ** 2) / N)
-    SX.append(SX[i] - X[j] / N)
+    if (i != 0):
+        X2[i] = X2[i - 1] - ((X[j]) ** 2) / N
+        SX[i] = SX[i - 1] - X[j] / N
 
     # Высчитывается среднее
-    x0 = (X[(j - 1) % N] + X[(j + 1) % N])/(2 + (a ** 2) * (w ** 2))
+    x0 = (X[(j - 1) % N] + X[(j + 1) % N]) / (2 + (a * w) ** 2)
     
     # Новый x[j] по Гауссу
     X[j] = np.random.normal(x0, d)
 
-    # Добовляется новый x^2 и x
-    X2[i + 1] = X2[i] + (X[j] ** 2) / N
-    SX[i + 1] = SX[i] + X[j] / N
+    # Добавляется новый x^2 и x
+    if (i != 0):
+        X2[i] = X2[i] + ((X[j]) ** 2) / N
+        SX[i] = SX[i] + X[j] / N
 
 
-ax1.plot(range(NT), SX[1:])
-ax2.plot(range(NT), X2[1:])
+ax1.plot(range(NT), SX)
+ax2.plot(range(NT), X2)
 
 
 plt.show()
