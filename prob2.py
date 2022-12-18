@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import random
+import math
 
 """Считываем параметры"""
 with open("param.json") as FileOfParam:
@@ -22,7 +23,8 @@ ax2 = fig2.add_subplot(111)
 # Параметры
 N = Parametrs[0]["N"]
 w = float(Parametrs[0]["w"])
-a = float(Parametrs[0]["a"])
+# a = float(Parametrs[0]["a"])
+a = 1/500
 NT = Parametrs[0]["NT"]
 m = float(Parametrs[0]["m"])
 T = Parametrs[0]["T"]
@@ -39,21 +41,20 @@ SX = np.zeros(NT)
 
 for i in range(NT):
     # Берется случайный x[j]
-    j = random.randint(0, N - 1)
-    # Из массива вычитается старое значение, чтобы потом заменить новым
-    if (i != 0):
-        X2[i] = X2[i - 1] - ((X[j]) ** 2) / N
-        SX[i] = SX[i - 1] - X[j] / N
+    for j in range(N):
+        # Из массива вычитается старое значение, чтобы потом заменить новым
 
-    # Высчитывается среднее
-    x0 = (X[(j - 1) % N] + X[(j + 1) % N]) / (2 + (a * w) ** 2)
-    
-    # Новый x[j] по Гауссу
-    X[j] = np.random.normal(x0, d)
+        # Высчитывается среднее
+        r = np.random.random(1)
+        phi= np.random.random(1)
+        x0 = (X[(j - 1) % N] + X[(j + 1) % N]) / (2 + (a * w) ** 2)
+        z0=math.cos(2*math.pi*phi)*(-2*math.log(r))**(0.5)
+        
+        # Новый x[j] по Гауссу
+        X[j] = x0 + d*z0
 
-    # Добавляется новый x^2 и x
-    if (i != 0):
-        X2[i] = X2[i] + ((X[j]) ** 2) / N
+        # Добавляется новый x^2 и x
+        X2[i] = X2[i] + (m / 2) * (w ** 2) * ((X[j]) ** 2) / N
         SX[i] = SX[i] + X[j] / N
 
 
