@@ -23,14 +23,13 @@ ax2 = fig2.add_subplot(111)
 # Параметры
 N = Parametrs[0]["N"]
 w = float(Parametrs[0]["w"])
-# a = float(Parametrs[0]["a"])
-a = 1/500
+a = float(Parametrs[0]["a"])
 NT = Parametrs[0]["NT"]
 m = float(Parametrs[0]["m"])
 T = Parametrs[0]["T"]
 
 # Дисперсия
-d = 2/np.sqrt((m * (1/a + (a ** 2) * (w ** 2)/2)))
+d = 1/np.sqrt(2*(m * (1/a + (a) * (w ** 2)/2)))
 
 # Конфигурация x, заполненая 0
 X = np.zeros(N)
@@ -58,8 +57,26 @@ for i in range(NT):
         SX[i] = SX[i] + X[j] / N
 
 
-ax1.plot(range(NT), SX)
-ax2.plot(range(NT), X2)
+SumOfE = 0
 
+i = T
+C = 0
+
+while(i < NT):
+    SumOfE = SumOfE + X2[i]
+    i += T//2
+    C += 1
+
+SumOfE /= C
+
+ax1.plot(range(NT), SX, label = '<x>')
+ax1.legend()
+ax1.grid(True)
+ax2.plot(range(NT), X2, label = '<E>')
+ax2.plot(range(NT), [SumOfE] * NT, label = 'Average of E for swips')
+ax2.legend()
+ax2.grid(True)
+
+print(SumOfE)
 
 plt.show()
